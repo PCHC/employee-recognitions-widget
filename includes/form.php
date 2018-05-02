@@ -26,28 +26,11 @@
 	</p>
 
   <p>
-		<input class="checkbox" type="checkbox" <?php checked( $instance['exclude_current'], 1 ); ?> id="<?php echo $this->get_field_id( 'exclude_current' ); ?>" name="<?php echo $this->get_field_name( 'exclude_current' ); ?>" />
-		<label for="<?php echo $this->get_field_id( 'exclude_current' ); ?>">
-			<?php _e( 'Exclude current post', 'pchc_employee_recognitions' ); ?>
-		</label>
-	</p>
-
-  <p>
-		<label for="<?php echo $this->get_field_id( 'post_status' ); ?>">
-			<?php _e( 'Post Status', 'pchc_employee_recognitions' ); ?>
-		</label>
-		<select class="widefat" id="<?php echo $this->get_field_id( 'post_status' ); ?>" name="<?php echo $this->get_field_name( 'post_status' ); ?>" style="width:100%;">
-			<?php foreach ( get_available_post_statuses() as $status_value => $status_label ) { ?>
-				<option value="<?php echo esc_attr( $status_label ); ?>" <?php selected( $instance['post_status'], $status_label ); ?>><?php echo esc_html( ucfirst( $status_label ) ); ?></option>
-			<?php } ?>
-		</select>
-	</p>
-
-  <p>
 		<label for="<?php echo $this->get_field_id( 'limit' ); ?>">
 			<?php _e( 'Number of posts to show', 'pchc_employee_recognitions' ); ?>
 		</label>
 		<input class="widefat" id="<?php echo $this->get_field_id( 'limit' ); ?>" name="<?php echo $this->get_field_name( 'limit' ); ?>" type="number" step="1" min="-1" value="<?php echo (int)( $instance['limit'] ); ?>" />
+    <small><?php _e( 'Use -1 to show all posts', 'pchc_employee_recognitions' ); ?></small>
 	</p>
 
   <p>
@@ -58,32 +41,36 @@
 		<small><?php _e( 'The number of posts to skip', 'pchc_employee_recognitions' ); ?></small>
 	</p>
 
-  <p>
-		<label for="<?php echo $this->get_field_id( 'days_offset' ); ?>">
-			<?php _e( 'Days to show', 'pchc_employee_recognitions' ); ?>
-		</label>
-		<input class="widefat" id="<?php echo $this->get_field_id( 'days_offset' ); ?>" name="<?php echo $this->get_field_name( 'days_offset' ); ?>" type="number" step="1" min="1" value="<?php echo (int)( $instance['days_offset'] ); ?>" />
-		<small><?php _e( 'Show posts within the range of days in the past.', 'pchc_employee_recognitions' ); ?></small>
-	</p>
+  <div class="pchcer-multiple-check-form">
+    <label>
+      <?php _e( 'Limit to Category', 'pchc_employee_recognitions' ); ?>
+    </label>
+    <ul>
+      <?php foreach( pchcer_cats_list() as $category ) : ?>
+        <li>
+          <input type="checkbox" value="<?php echo (int) $category->term_id; ?>" id="<?php echo $this->get_field_id( 'category' ) . '-' . (int) $category->term_id; ?>" name="<?php echo $this->get_field_name( 'category' ); ?>[]" <?php checked( is_array( $instance['category'] ) && in_array( $category->term_id, $instance['category'] ) ); ?> />
+  					<label for="<?php echo $this->get_field_id( 'category' ) . '-' . (int) $category->term_id; ?>">
+  						<?php echo esc_html( $category->name ); ?>
+  					</label>
+        </li>
+      <?php endforeach; ?>
+    </ul>
+  </div>
 
-  <p>
-		<input id="<?php echo $this->get_field_id( 'date' ); ?>" name="<?php echo $this->get_field_name( 'date' ); ?>" type="checkbox" <?php checked( $instance['date'] ); ?> />
-		<label for="<?php echo $this->get_field_id( 'date' ); ?>">
-			<?php _e( 'Display Date', 'pchc_employee_recognitions' ); ?>
-		</label>
-	</p>
+  <div class="pchcer-multiple-check-form">
+    <label>
+      <?php _e( 'Limit to Detpartment/Location', 'pchc_employee_recognitions' ); ?>
+    </label>
+    <ul>
+      <?php foreach( pchcer_cats_list('department') as $department ) : ?>
+        <li>
+          <input type="checkbox" value="<?php echo (int) $department->term_id; ?>" id="<?php echo $this->get_field_id( 'department' ) . '-' . (int) $department->term_id; ?>" name="<?php echo $this->get_field_name( 'department' ); ?>[]" <?php checked( is_array( $instance['department'] ) && in_array( $department->term_id, $instance['department'] ) ); ?> />
+  					<label for="<?php echo $this->get_field_id( 'department' ) . '-' . (int) $department->term_id; ?>">
+  						<?php echo esc_html( $department->name ); ?>
+  					</label>
+          </li>
+      <?php endforeach; ?>
+    </ul>
+  </div>
 
-	<p>
-		<input id="<?php echo $this->get_field_id( 'date_modified' ); ?>" name="<?php echo $this->get_field_name( 'date_modified' ); ?>" type="checkbox" <?php checked( $instance['date_modified'] ); ?> />
-		<label for="<?php echo $this->get_field_id( 'date_modified' ); ?>">
-			<?php _e( 'Display Modification Date', 'pchc_employee_recognitions' ); ?>
-		</label>
-	</p>
-
-	<p>
-		<input id="<?php echo $this->get_field_id( 'date_relative' ); ?>" name="<?php echo $this->get_field_name( 'date_relative' ); ?>" type="checkbox" <?php checked( $instance['date_relative'] ); ?> />
-		<label for="<?php echo $this->get_field_id( 'date_relative' ); ?>">
-			<?php _e( 'Use Relative Date. eg: 5 days ago', 'pchc_employee_recognitions' ); ?>
-		</label>
-	</p>
 </div>

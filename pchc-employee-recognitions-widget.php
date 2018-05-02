@@ -3,7 +3,7 @@
  * Plugin Name:        PCHC Employee Recognitions Widget
  * Plugin URI:         https://www.github.com/pchc/employee-recognitions-widget
  * Description:        WordPress widget to display recent recipients of employee recognitions
- * Version:            0.1.0
+ * Version:            0.2.0
  * Author:             Chris Violette
  * Author URI:         https://pixleight.com
  *
@@ -30,7 +30,7 @@ class EmployeeRecognitions {
 		define( 'PCHCER_DIR', trailingslashit( plugin_dir_path( __FILE__ ) ) );
 
 		// Set the constant path to the plugin directory URI.
-		define( 'PCHCER_URI', trailingslashit( plugin_dir_url( __FILE__ ) ) );
+		define( 'PCHCER_URI',  trailingslashit( home_url( '/' . str_replace( ABSPATH, "", dirname( __FILE__ ) ) ) ) );
 
 		// Set the constant path to the includes directory.
 		define( 'PCHCER_INCLUDES', PCHCER_DIR . trailingslashit( 'includes' ) );
@@ -41,7 +41,8 @@ class EmployeeRecognitions {
 		// Set the constant path to the assets directory.
 		define( 'PCHCER_ASSETS', PCHCER_URI . trailingslashit( 'assets' ) );
 
-		//add_action( 'plugins_loaded', array( &$this, 'constants' ), 1 );
+    // Load the admin style.
+		add_action( 'admin_enqueue_scripts', array( &$this, 'admin_style' ) );
 
     // Register widget.
 		add_action( 'widgets_init', array( &$this, 'register_widget' ) );
@@ -67,6 +68,16 @@ class EmployeeRecognitions {
 	public function register_widget() {
 		require_once( PCHCER_CLASS . 'widget.php' );
 		register_widget( 'pchc_employee_recognitions' );
+	}
+
+  /**
+	 * Register custom style for the widget settings.
+	 *
+	 * @since  0.2
+	 */
+	public function admin_style() {
+		// Loads the widget style.
+		wp_enqueue_style( 'pchcer-admin-style', trailingslashit( PCHCER_ASSETS ) . 'css/pchcer-admin.css', null, null );
 	}
 }
 

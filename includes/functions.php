@@ -16,23 +16,18 @@
 */
 function pchcer_get_default_args() {
   $defaults = array(
-    'title'             => esc_attr__( 'Recent Posts', 'pchcer' ),
+    'title'             => esc_attr__( 'Employee Recognitions', 'pchcer' ),
     'title_url'         => '',
 
     'limit'             => 5,
     'offset'            => 0,
     'order'             => 'DESC',
     'orderby'           => 'date',
-    'post_type'         => array( 'post' ),
+    'post_type'         => array( 'employee_recognition' ),
     'post_status'       => 'publish',
     'ignore_sticky'     => 1,
-    'exclude_current'   => 1,
-    'days_offset'       => 30,
-
-    'date'              => true,
-    'date_relative'     => false,
-    'date_modified'     => false,
-
+    'category'          => array(),
+    'department'        => array(),
     'before'            => '',
     'after'             => '',
   );
@@ -58,18 +53,29 @@ function pchcer_get_posts( $args = array() ) {
     'order'               => $args['order'],
     'post_type'           => $args['post_type'],
     'post_status'         => $args['post_status'],
-    'ignore_sticky_posts' => $args['ignore_sticky'],
-    'date_query'          => array(
-      array(
-        'after'           => '-'.$args['days_offset'].' days',
-        'column'          => 'post_date',
-      )
-    )
   );
 
-  // Exclude current post
-  if ( $args['exclude_current'] ) {
-    $query['post__not_in'] = array( get_the_ID() );
+  // Add taxonomy query if category or department are set
+  if( !empty( $args['category'] ) || !empty( $args['department'] ) ) {
+    $query['tax_query'] = array(
+      'relation' => 'AND',
+    );
+  }
+
+  // Category query
+  if ( !empty( $args['category'] ) ) {
+    array_push( $query['tax_query'], array(
+      'taxonomy' => 'employee_recognition_category',
+      'terms' => $args['category'],
+    ) );
+  }
+
+  // Department/Location query
+  if ( !empty( $args['department'] ) ) {
+    array_push( $query['tax_query'], array(
+      'taxonomy' => 'department',
+      'terms' => $args['department'],
+    ) );
   }
 
   // Allow plugins/themes developer to filter the default query.
@@ -114,20 +120,6 @@ function pchcer_get_recent_posts( $args = array() ) {
 
             $html .= '<h4 class="pchcer__post-title"><a href="' . esc_url( get_permalink() ) . '" title="' . sprintf( esc_attr__( 'Read: %s', 'pchcer' ), the_title_attribute( 'echo=0' ) ) . '" rel="bookmark">' . esc_attr( get_the_title() ) . '</a></h4>';
 
-            if( $args['date'] ) :
-              $date = get_the_date();
-              if( $args['date_relative'] ) :
-                $date = sprintf( __( '%s ago', 'pchcer' ), human_time_diff( get_the_date( 'U' ), current_time( 'timestamp' ) ) );
-              endif;
-              $html .= '<time class="rpwe-time published" datetime="' . esc_html( get_the_date( 'c' ) ) . '">' . esc_html( $date ) . '</time>';
-            elseif( $args['date_modified'] ) : // if both date functions are provided, we use date to be backwards compatible
-              $date = get_the_modified_date();
-              if ( $args['date_relative'] ) :
-                $date = sprintf( __( '%s ago', 'pchcer' ), human_time_diff( get_the_modified_date( 'U' ), current_time( 'timestamp' ) ) );
-              endif;
-              $html .= '<time class="rpwe-time modfied" datetime="' . esc_html( get_the_modified_date( 'c' ) ) . '">' . esc_html( $date ) . '</time>';
-            endif;
-
           $html .= '</li>';
 
         endwhile;
@@ -145,4 +137,25 @@ function pchcer_get_recent_posts( $args = array() ) {
 
   // Return the  posts markup.
   return wp_kses_post( $args['before'] ) . apply_filters( 'pchcer_markup', $html ) . wp_kses_post( $args['after'] );
+}
+
+/**
+ * Display list of categories for widget.
+ *
+ * @since  0.2
+ */
+function pchcer_cats_list( $term = 'employee_recognition_category' ) {
+
+	// Arguments
+	$args = array(
+		'number' => 99
+	);
+
+	// Allow dev to filter the arguments
+	$args = apply_filters( 'pchcer_cats_list_args', $args );
+
+	// Get the cats
+	$cats = get_terms( $term, $args );
+
+	return $cats;
 }

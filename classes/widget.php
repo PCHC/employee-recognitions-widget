@@ -3,7 +3,7 @@
  * Plugin Name:        PCHC Employee Recognitions Widget
  * Plugin URI:         https://www.github.com/pixleight/p8-recent-posts
  * Description:        WordPress widget to display recent recipients of employee recognitions
- * Version:            0.1.0
+ * Version:            0.2.0
  * Author:             Chris Violette
  * Author URI:         https://pixleight.com
  *
@@ -94,14 +94,11 @@ class PCHC_Employee_Recognitions extends WP_Widget {
 		$instance                     = $old_instance;
     $instance['title']            = sanitize_text_field( $new_instance['title'] );
 		$instance['title_url']        = esc_url_raw( $new_instance['title_url'] );
-    $instance['exclude_current']  = isset( $new_instance['exclude_current'] ) ? (bool) $new_instance['exclude_current'] : 0;
-    $instance['post_status']      = stripslashes( $new_instance['post_status'] );
     $instance['limit']            = intval( $new_instance['limit'] );
     $instance['offset']           = intval( $new_instance['offset'] );
-    $instance['days_offset']      = intval( $new_instance['days_offset'] );
-    $instance['date']             = isset( $new_instance['date'] ) ? (bool) $new_instance['date'] : false;
-    $instance['date_relative']    = isset( $new_instance['date_relative'] ) ? (bool) $new_instance['date_relative'] : false;
-    $instance['date_modified']    = isset( $new_instance['date_modified'] ) ? (bool) $new_instance['date_modified'] : false;
+
+    $instance['category']         = $new_instance['category'];
+    $instance['department']       = $new_instance['department'];
 
     return $instance;
   }
