@@ -49,7 +49,7 @@ class PCHC_Employee_Recognitions extends WP_Widget {
   public function widget( $args, $instance ) {
     extract( $args );
 
-    $recent = pchcer_get_recent_posts( $instance );
+    $posts = pchcer_get_posts_markup( $instance );
 
     $title = apply_filters( 'widget_title', $instance[ 'title' ]);
     $blog_title = get_bloginfo( 'name' );
@@ -67,7 +67,7 @@ class PCHC_Employee_Recognitions extends WP_Widget {
       echo $before_title . apply_filters( 'widget_title',  $instance['title'], $instance, $this->id_base ) . $after_title;
     }
 
-    echo $recent;
+    echo $posts;
 
     // Close the theme's widget wrapper
     echo $after_widget;
@@ -99,6 +99,9 @@ class PCHC_Employee_Recognitions extends WP_Widget {
 
     $instance['category']         = $new_instance['category'];
     $instance['department']       = $new_instance['department'];
+
+    $instance['widget_more']      = isset( $new_instance['widget_more'] ) ? (bool) $new_instance['widget_more'] : false;
+    $instance['post_more']      = isset( $new_instance['post_more'] ) ? (bool) $new_instance['post_more'] : false;
 
     return $instance;
   }

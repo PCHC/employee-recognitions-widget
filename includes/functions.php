@@ -28,6 +28,8 @@ function pchcer_get_default_args() {
     'ignore_sticky'     => 1,
     'category'          => array(),
     'department'        => array(),
+    'widget_more'       => true,
+    'post_more'         => true,
     'before'            => '',
     'after'             => '',
   );
@@ -94,7 +96,7 @@ function pchcer_get_posts( $args = array() ) {
  * @param array $args
  * @return string|array The HTML for the posts.
  */
-function pchcer_get_recent_posts( $args = array() ) {
+function pchcer_get_posts_markup( $args = array() ) {
 
   // Set up a default, empty variable
   $html = '';
@@ -118,13 +120,47 @@ function pchcer_get_recent_posts( $args = array() ) {
         while( $posts->have_posts() ) : $posts->the_post();
           $html .= '<li class="pchcer__post">';
 
-            $html .= '<h4 class="pchcer__post-title"><a href="' . esc_url( get_permalink() ) . '" title="' . sprintf( esc_attr__( 'Read: %s', 'pchcer' ), the_title_attribute( 'echo=0' ) ) . '" rel="bookmark">' . esc_attr( get_the_title() ) . '</a></h4>';
+            if( has_post_thumbnail() ) {
+              $html .= '<a href="' . esc_url( get_permalink() ) . '" title="' . sprintf( esc_attr__( 'Read more: %s', 'pchcer' ), the_title_attribute( 'echo=0' ) ) . '" rel="bookmark" class="pchcer__image-link">';
+              $html .= get_the_post_thumbnail($post->ID, 'thumbnail', array('class' => 'pchcer__image'));
+              $html .= '</a>';
+            }
+
+            $html .= '<h4 class="pchcer__title"><a href="' . esc_url( get_permalink() ) . '" title="' . sprintf( esc_attr__( 'Read more: %s', 'pchcer' ), the_title_attribute( 'echo=0' ) ) . '" rel="bookmark">' . esc_attr( get_the_title() ) . '</a></h4>';
+
+            $html .= '<time class="pchcer__timestamp" datetime="' . get_post_time('c', true) . '">';
+            $html .= get_the_date('F Y');
+            $html .= '</time>';
+
+            $recCat = get_the_term_list( $post->ID, 'employee_recognition_category', '<li>', ', ', '</li>' );
+            $recDept = get_the_term_list( $post->ID, 'department', '<li>', ', ', '</li>' );
+
+            if( $recCat ) {
+              $html .= '<ul class="pchcer__taxonomy pchcer__taxonomy--category">';
+              $html .= $recCat;
+              $html .= '</ul>';
+            }
+
+            if( $recDept ) {
+              $html .= '<ul class="pchcer__taxonomy pchcer__taxonomy--department">';
+              $html .= $recDept;
+              $html .= '</ul>';
+            }
+
+            if( $post_more ) {
+              $html .= '<a href="' . esc_url( get_permalink() ) . '" title="' . sprintf( esc_attr__( 'Read more: %s', 'pchcer' ), the_title_attribute( 'echo=0' ) ) . '" rel="bookmark" class="pchcer__readmore">Read More <i class="fas fa-angle-right"></i></a>';
+            }
 
           $html .= '</li>';
 
         endwhile;
 
       $html .= '</ul>';
+
+      if( $widget_more && $title_url ) {
+        $html .= '<a href="' . esc_url( $title_url ) . '" title="' . esc_attr__( $title ) . '" class="pchcer__widget-readmore"><i class="fas fa-heartbeat"></i> View More</a>';
+      }
+
     $html .= '</div>';
 
   endif;

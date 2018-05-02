@@ -26,6 +26,13 @@
 	</p>
 
   <p>
+		<input id="<?php echo $this->get_field_id( 'widget_more' ); ?>" name="<?php echo $this->get_field_name( 'widget_more' ); ?>" type="checkbox" <?php checked( $instance['widget_more'] ); ?> />
+		<label for="<?php echo $this->get_field_id( 'widget_more' ); ?>">
+			<?php _e( 'Display Widget View More Button', 'pchc_employee_recognitions' ); ?>
+		</label>
+	</p>
+
+  <p>
 		<label for="<?php echo $this->get_field_id( 'limit' ); ?>">
 			<?php _e( 'Number of posts to show', 'pchc_employee_recognitions' ); ?>
 		</label>
@@ -72,5 +79,12 @@
       <?php endforeach; ?>
     </ul>
   </div>
+
+  <p>
+		<input id="<?php echo $this->get_field_id( 'post_more' ); ?>" name="<?php echo $this->get_field_name( 'post_more' ); ?>" type="checkbox" <?php checked( $instance['post_more'] ); ?> />
+		<label for="<?php echo $this->get_field_id( 'post_more' ); ?>">
+			<?php _e( 'Display Post Read More Links', 'pchc_employee_recognitions' ); ?>
+		</label>
+	</p>
 
 </div>
